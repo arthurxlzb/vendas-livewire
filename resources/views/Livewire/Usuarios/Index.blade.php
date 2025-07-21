@@ -20,7 +20,7 @@
             <div class="absolute inset-0 backdrop-blur-sm"></div>
 
             <div class="relative bg-blue-200 border-2 border-black rounded-lg shadow-lg p-6 z-10 max-w-3xl w-full">
-                <h2 class="text-xl font-bold mb-4">{{ $userid ? 'Editar Usuário' : 'Cadastrar Usuário' }}</h2>
+                <h2 class="text-xl font-bold mb-4">{{ $userid ? 'Editar Cliente' : 'Cadastrar Cliente' }}</h2>
 
                 <form wire:submit.prevent="save" class="space-y-4">
                     <div class="grid grid-cols-3 gap-4">

@@ -114,6 +114,7 @@
     <table class="w-full table-auto border border-collapse">
         <thead class="bg-gray-100">
             <tr>
+                <th class="p-2 border">ID</th>
                 <th class="p-2 border">Cliente</th>
                 <th class="p-2 border text-center">Data</th>
                 <th class="p-2 border text-center">Total</th>
@@ -123,6 +124,7 @@
         <tbody>
             @foreach ($sales as $sale)
                 <tr>
+                    <td class="p-2 border">{{ $sale->id }}</td>
                     <td class="p-2 border">{{ $sale->client->name }}</td>
                     <td class="p-2 border text-center">{{ \Carbon\Carbon::parse($sale->sale_date)->format('d/m/Y') }}</td>
                     <td class="p-2 border text-center">R$ {{ number_format($sale->total, 2, ',', '.') }}</td>
