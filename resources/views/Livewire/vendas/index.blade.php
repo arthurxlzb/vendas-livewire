@@ -145,7 +145,25 @@
 
             <div class="relative bg-green-100 border-2 border-black rounded-lg shadow-lg p-6 z-10 max-w-2xl w-full">
                 <h2 class="text-xl font-bold mb-4">Detalhes da Venda</h2>
-                <p><strong>Cliente:</strong> {{ $viewingSale->client->name }}</p>
+                <table class="w-full border border-collapse text-left mb-4">
+    <thead class="bg-green-200">
+        <tr>
+            <th class="p-2 border">Nome</th>
+            <th class="p-2 border">Email</th>
+            <th class="p-2 border">Número</th>
+        </tr>
+    </thead>
+    <tbody class="bg-white">
+        <tr>
+            <td class="p-2 border">{{ $viewingSale->client->name }}</td>
+            <td class="p-2 border">{{ $viewingSale->client->email }}</td>
+            <td class="p-2 border">
+                ({{ substr($viewingSale->client->number, 0, 2) }})
+                {{ substr($viewingSale->client->number, 2, 5) }}-{{ substr($viewingSale->client->number, 7) }}
+            </td>
+        </tr>
+    </tbody>
+</table>
                 <p><strong>Data:</strong> {{ \Carbon\Carbon::parse($viewingSale->sale_date)->format('d/m/Y') }}</p>
 
                 <table class="w-full table-auto border border-collapse mt-4">

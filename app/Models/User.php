@@ -46,4 +46,10 @@ class User extends Authenticatable
             //'password' => 'hashed',
         ];
     }
+
+    public function sales()
+{
+    return $this->hasMany(\App\Models\Sale::class, 'client_id');
+}
+
 }
