@@ -1,9 +1,9 @@
 <div class="p-6 max-w-5xl mx-auto">
     {{-- Cabeçalho --}}
     <div class="flex items-center justify-between mt-5">
-        <h2 class="text-4xl font-bold">Vendas</h2>
+        <h2 class="text-4xl font-bold">🛒 Vendas</h2>
         <button wire:click="openCreateModal" class="bg-blue-500 hover:bg-blue-600 text-white hover:text-black px-5 py-3 rounded">
-            Registrar Venda
+            Registrar Venda+
         </button>
     </div>
 
@@ -60,7 +60,7 @@
                             @foreach ($items as $index => $item)
                                 <tr wire:key="item-{{ $index }}">
                                     <td class="p-2 border">
-                                        <select wire:model="items.{{ $index }}.product_id" class="w-full border rounded p-1">
+                                        <select wire:model.live="items.{{ $index }}.product_id" class="w-full border rounded p-1">
                                             <option value="">Selecione...</option>
                                             @foreach ($products as $product)
                                                 <option value="{{ $product->id }}">{{ $product->name }}</option>
@@ -69,7 +69,7 @@
                                         @error("items.$index.product_id") <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                                     </td>
                                     <td class="p-2 border text-center">
-                                        <input type="number" min="1" step="1" wire:model="items.{{ $index }}.quantity" class="w-20 text-center border rounded p-1">
+                                        <input type="number" min="1" step="1" wire:model.live="items.{{ $index }}.quantity" class="w-20 text-center border rounded p-1">
                                         @error("items.$index.quantity") <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                                     </td>
                                     <td class="p-2 border text-center">
@@ -87,20 +87,17 @@
                     </table>
                 </div>
 
-                {{-- Ações de Itens --}}
-                <div class="flex items-center justify-between mb-4">
-                    <button wire:click="addItem" class="bg-blue-700 text-white hover:text-black px-4 py-2 rounded">Adicionar Item +</button>
-                    <button wire:click="refreshValues" class="bg-yellow-500 text-white hover:text-black px-4 py-2 rounded">↻</button>
-                </div>
 
-                {{-- Total e Salvar --}}
-                <div class="flex items-center justify-between">
-                    <button wire:click="save" class="bg-green-600 text-white hover:text-black px-6 py-2 rounded">Salvar Venda</button>
+
+                
+                <div class="flex items-center justify-between mt-3">
+                    <button wire:click="addItem" class="bg-blue-700 text-white hover:text-black px-6 py-2 rounded">Adicionar Item +</button>
                     <div class="text-xl font-bold">Total: R$ {{ number_format($total, 2, ',', '.') }}</div>
                 </div>
 
-                {{-- Cancelar --}}
-                <div class="text-right mt-6">
+
+                <div class="flex items-center justify-between mt-6">
+                   <button wire:click="save" class="bg-green-600 text-white hover:text-black px-6 py-2 rounded">Salvar Venda</button>
                     <button wire:click="$set('showCreateModal', false)" class="bg-gray-600 text-white hover:text-black px-6 py-2 rounded">
                         Cancelar
                     </button>
@@ -194,7 +191,7 @@
                 </div>
 
                 <div class="mt-4 text-right">
-                    <button wire:click="closeDetails" class="bg-gray-500 text-white hover:bg-gray-600 px-4 py-2 rounded">
+                    <button wire:click="closeDetails" class="bg-gray-500 text-white hover:text-black px-4 py-2 rounded">
                         Fechar
                     </button>
                 </div>

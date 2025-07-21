@@ -28,17 +28,17 @@
             <a href="{{ route('usuarios.index') }}"
                class="text-blue-500 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-300
                       {{ request()->routeIs('usuarios.*') ? 'bg-blue-200 font-bold' : '' }}">
-              Clientes
+              👤 Clientes
             </a>
             <a href="{{ route('produtos.index') }}"
                class="text-blue-500 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-300
                       {{ request()->routeIs('produtos.*') ? 'bg-blue-200 font-bold' : '' }}">
-              Produtos
+              📦 Produtos
             </a>
             <a href="{{ route('vendas.index') }}"
                class="text-blue-500 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-300
                       {{ request()->routeIs('vendas.*') ? 'bg-blue-200 font-bold' : '' }}">
-              Vendas
+              🛒 Vendas
             </a>
           </div>
         </div>

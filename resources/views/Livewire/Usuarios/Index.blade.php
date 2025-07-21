@@ -1,9 +1,9 @@
 <div class="p-6 max-w-5xl mx-auto">
     {{-- Cabeçalho --}}
     <div class="flex items-center justify-between mt-5">
-        <h2 class="text-4xl font-bold">Usuários</h2>
+        <h2 class="text-4xl font-bold">👤 Usuários</h2>
         <button wire:click="openModal" class="bg-blue-500 hover:bg-blue-600 text-white hover:text-black px-5 py-3 rounded">
-            Novo Usuário
+            Novo Usuário+
         </button>
     </div>
 
