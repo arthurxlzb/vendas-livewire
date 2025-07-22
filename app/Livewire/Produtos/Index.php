@@ -8,7 +8,7 @@ use Illuminate\Validation\Rule;
 
 class Index extends Component
 {
-    
+
     public $products = [];
 
 
@@ -79,6 +79,7 @@ class Index extends Component
         $this->quantidade  = $p->quantidade;
         $this->unidade     = $p->unidade;
 
+        $this->resetValidation();
         $this->showCreateModal = true;
     }
 

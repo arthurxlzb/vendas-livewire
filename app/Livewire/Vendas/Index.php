@@ -168,6 +168,7 @@ class Index extends Component
             'subtotal'   => $i->subtotal,
         ])->toArray();
 
+        $this->resetValidation();
         $this->calculateTotal();
         $this->showCreateModal = true;
     }
