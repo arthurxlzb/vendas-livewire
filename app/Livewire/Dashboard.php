@@ -16,13 +16,14 @@ class Dashboard extends Component
 
     public function mount()
     {
-        // anos que existem
+        // Busca os anos únicos com vendas registradas no banco
         $this->anosDisponiveis = Sale::selectRaw('YEAR(sale_date) as ano')
             ->distinct()
             ->orderByDesc('ano')
             ->pluck('ano')
             ->toArray();
 
+        // Define o ano selecionado como 2025, se estiver disponível;
         $this->anoSelecionado = in_array(2025, $this->anosDisponiveis)
             ? 2025
             : ($this->anosDisponiveis[0] ?? now()->year);
@@ -30,21 +31,19 @@ class Dashboard extends Component
 
     public function updatedAnoSelecionado()
     {
-        // re-renderiza automaticamente
+        // Livewire detecta a mudança automaticamente
     }
 
     public function render()
     {
         $ano = $this->anoSelecionado;
 
-        // totais principais
         $totalReceita  = Sale::whereYear('sale_date', $ano)->sum('total');
         $totalVendas   = Sale::whereYear('sale_date', $ano)->count();
         $totalClientes = Sale::whereYear('sale_date', $ano)
             ->distinct('client_id')
             ->count('client_id');
 
-        // vendas mensais
         $mensal = Sale::selectRaw('MONTH(sale_date) as mes, COUNT(*) as total')
             ->whereYear('sale_date', $ano)
             ->groupBy('mes')
@@ -53,11 +52,10 @@ class Dashboard extends Component
 
         $labels = $vendas = [];
         for ($m = 1; $m <= 12; $m++) {
-            $labels[] = date('M', mktime(0,0,0,$m,1));
-            $vendas[] = $mensal[$m] ?? 0;
+            $labels[] = date('M', mktime(0, 0, 0, $m, 1));
+            $vendas[] = $mensal[$m] ?? 0; // se não teve venda, usa 0
         }
 
-        // Produto mais vendido (quantidade total)
         $produtoMaisVendido = SaleItem::select('product_id', DB::raw('SUM(quantity) as qtd'))
             ->whereHas('sale', fn($q) => $q->whereYear('sale_date', $ano))
             ->groupBy('product_id')
@@ -68,7 +66,6 @@ class Dashboard extends Component
             ? Product::find($produtoMaisVendido->product_id)?->name ?? 'Produto não encontrado'
             : 'Sem dados';
 
-        // Produto com maior receita (soma dos subtotais)
         $produtoComMaisReceita = SaleItem::select('product_id', DB::raw('SUM(subtotal) as receita'))
             ->whereHas('sale', fn($q) => $q->whereYear('sale_date', $ano))
             ->groupBy('product_id')
@@ -79,7 +76,6 @@ class Dashboard extends Component
             ? Product::find($produtoComMaisReceita->product_id)?->name ?? 'Produto não encontrado'
             : 'Sem dados';
 
-        // Cliente que mais comprou (por total em R$)
         $clienteTop = Sale::select('client_id', DB::raw('SUM(total) as total'))
             ->whereYear('sale_date', $ano)
             ->groupBy('client_id')
@@ -90,12 +86,13 @@ class Dashboard extends Component
             ? User::find($clienteTop->client_id)?->name ?? 'Cliente não encontrado'
             : 'Sem dados';
 
-        // Venda mais cara
         $vendaMaisCara = Sale::whereYear('sale_date', $ano)
             ->orderByDesc('total')
             ->first();
+
         $valorVendaMaisCara = $vendaMaisCara ? $vendaMaisCara->total : 0;
 
+        // Envia os dados para a view do dashboard
         return view('Livewire.dashboard', compact(
             'totalReceita',
             'totalVendas',

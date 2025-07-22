@@ -38,6 +38,7 @@ class Index extends Component
         $this->showModal = false;
     }
 
+    // Cria ou atualiza um usuário no banco
     public function save()
     {
         $this->validate([
@@ -65,6 +66,7 @@ class Index extends Component
             'number' => $this->number,
         ];
 
+        // Se tiver um ID, atualiza o usuário. Senão, cria um novo.
         User::updateOrCreate(['id' => $this->userid], $data);
 
         session()->flash('message', $this->userid ? 'Usuário atualizado!' : 'Usuário criado!');
@@ -72,6 +74,7 @@ class Index extends Component
         $this->loadUsuarios();
     }
 
+    // Carrega os dados de um usuário no formulário para edição
     public function edit($id)
     {
         $user = User::findOrFail($id);
