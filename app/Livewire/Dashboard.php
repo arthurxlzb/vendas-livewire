@@ -4,34 +4,52 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Sale;
-use App\Models\User;
-use App\Models\Product;
 use App\Models\SaleItem;
+use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 
 class Dashboard extends Component
 {
     public int   $anoSelecionado;
     public array $anosDisponiveis = [];
+    public array $labels         = [];
+    public array $vendas         = [];
 
     public function mount()
-    {
-        // Busca os anos únicos com vendas registradas no banco
-        $this->anosDisponiveis = Sale::selectRaw('YEAR(sale_date) as ano')
-            ->distinct()
-            ->orderByDesc('ano')
-            ->pluck('ano')
-            ->toArray();
+{
+    // anos disponíveis
+    $this->anosDisponiveis = Sale::selectRaw('YEAR(sale_date) as ano')
+        ->distinct()
+        ->orderByDesc('ano')
+        ->pluck('ano')
+        ->toArray();
 
-        // Define o ano selecionado como 2025, se estiver disponível;
-        $this->anoSelecionado = in_array(2025, $this->anosDisponiveis)
-            ? 2025
-            : ($this->anosDisponiveis[0] ?? now()->year);
-    }
+    // força 2025 como padrão se existir
+    $this->anoSelecionado = in_array(2025, $this->anosDisponiveis)
+        ? 2025
+        : ($this->anosDisponiveis[0] ?? now()->year);
+
+    $this->loadChartData();
+}
 
     public function updatedAnoSelecionado()
     {
-        // Livewire detecta a mudança automaticamente
+        $this->loadChartData();
+    }
+
+    private function loadChartData(): void
+    {
+        $mensal = Sale::selectRaw('MONTH(sale_date) as mes, COUNT(*) as total')
+            ->whereYear('sale_date', $this->anoSelecionado)
+            ->groupBy('mes')
+            ->pluck('total', 'mes')
+            ->toArray();
+
+        $this->labels = $this->vendas = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $this->labels[] = date('M', mktime(0, 0, 0, $m, 1));
+            $this->vendas[] = $mensal[$m] ?? 0;
+        }
     }
 
     public function render()
@@ -41,67 +59,36 @@ class Dashboard extends Component
         $totalReceita  = Sale::whereYear('sale_date', $ano)->sum('total');
         $totalVendas   = Sale::whereYear('sale_date', $ano)->count();
         $totalClientes = Sale::whereYear('sale_date', $ano)
-            ->distinct('client_id')
-            ->count('client_id');
-
-        $mensal = Sale::selectRaw('MONTH(sale_date) as mes, COUNT(*) as total')
-            ->whereYear('sale_date', $ano)
-            ->groupBy('mes')
-            ->pluck('total', 'mes')
-            ->toArray();
-
-        $labels = $vendas = [];
-        for ($m = 1; $m <= 12; $m++) {
-            $labels[] = date('M', mktime(0, 0, 0, $m, 1));
-            $vendas[] = $mensal[$m] ?? 0; // se não teve venda, usa 0
-        }
+            ->distinct('client_id')->count('client_id');
 
         $produtoMaisVendido = SaleItem::select('product_id', DB::raw('SUM(quantity) as qtd'))
             ->whereHas('sale', fn($q) => $q->whereYear('sale_date', $ano))
-            ->groupBy('product_id')
-            ->orderByDesc('qtd')
-            ->first();
-
+            ->groupBy('product_id')->orderByDesc('qtd')->first();
         $nomeProdutoMaisVendido = $produtoMaisVendido
-            ? Product::find($produtoMaisVendido->product_id)?->name ?? 'Produto não encontrado'
+            ? Product::find($produtoMaisVendido->product_id)->name
             : 'Sem dados';
 
         $produtoComMaisReceita = SaleItem::select('product_id', DB::raw('SUM(subtotal) as receita'))
             ->whereHas('sale', fn($q) => $q->whereYear('sale_date', $ano))
-            ->groupBy('product_id')
-            ->orderByDesc('receita')
-            ->first();
-
+            ->groupBy('product_id')->orderByDesc('receita')->first();
         $nomeProdutoComMaisReceita = $produtoComMaisReceita
-            ? Product::find($produtoComMaisReceita->product_id)?->name ?? 'Produto não encontrado'
+            ? Product::find($produtoComMaisReceita->product_id)->name
             : 'Sem dados';
 
-        $clienteTop = Sale::select('client_id', DB::raw('SUM(total) as total'))
-            ->whereYear('sale_date', $ano)
-            ->groupBy('client_id')
-            ->orderByDesc('total')
-            ->first();
+        // Variáveis locais para compact
+        $labels = $this->labels;
+        $vendas = $this->vendas;
 
-        $nomeClienteTop = $clienteTop
-            ? User::find($clienteTop->client_id)?->name ?? 'Cliente não encontrado'
-            : 'Sem dados';
-
-        $vendaMaisCara = Sale::whereYear('sale_date', $ano)
-            ->orderByDesc('total')
-            ->first();
-
-        $valorVendaMaisCara = $vendaMaisCara ? $vendaMaisCara->total : 0;
-
-        // Envia os dados para a view do dashboard
         return view('Livewire.dashboard', compact(
             'totalReceita',
             'totalVendas',
             'totalClientes',
-            'labels',
-            'vendas',
             'nomeProdutoMaisVendido',
-            'nomeProdutoComMaisReceita'
-        ))->layout('layouts.app', [
+            'nomeProdutoComMaisReceita',
+            'labels',
+            'vendas'
+        ))
+        ->layout('layouts.app', [
             'anosDisponiveis' => $this->anosDisponiveis,
             'anoSelecionado'  => $this->anoSelecionado,
         ]);
