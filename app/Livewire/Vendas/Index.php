@@ -27,7 +27,7 @@ class Index extends Component
     protected $rules = [
         'clientId'           => 'required|exists:users,id',
         'saleDate'           => 'required|date',
-        'items'              => 'required|array|min:1',
+        'items' => ['required', 'array', 'min:1'],
         'items.*.product_id' => 'required|exists:products,id',
         'items.*.quantity'   => 'required|integer|min:1',
     ];
