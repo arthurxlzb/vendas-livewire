@@ -10,12 +10,14 @@ class ProductFactory extends Factory
 
     public function definition()
     {
+        $unidadesValidas = ['G', 'KG', 'TON', 'ML', 'L', 'M²', 'M³', 'CM', 'M', 'KM', 'UNI'];
+
         return [
             'name'        => $this->faker->word(),
-            'price'       => $this->faker->randomFloat(2, 1, 100), // entre R$1 e R$100
+            'price'       => $this->faker->randomFloat(2, 1, 100),
             'description' => $this->faker->optional()->sentence(),
-            'quantidade'  => $this->faker->randomFloat(2, 1, 50),  // se já tiver esse campo
-            'unidade'     => $this->faker->randomElement(['g','kg','ml','un']),
+            'quantidade'  => $this->faker->randomFloat(2, 1, 50),
+            'unidade'     => $this->faker->randomElement($unidadesValidas),
         ];
     }
 }
