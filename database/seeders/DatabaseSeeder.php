@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Product;
+use App\Models\Client;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,6 +16,7 @@ class DatabaseSeeder extends Seeder
     {
         // Cria 10 produtos fictícios
         Product::factory()->count(10)->create();
+        Client::factory(10)->create();
 
         // Cria um usuário de teste
         User::factory()->create([

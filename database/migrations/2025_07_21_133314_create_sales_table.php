@@ -13,7 +13,7 @@ return new class extends Migration
 {
    Schema::create('sales', function (Blueprint $table) {
     $table->id();
-    $table->foreignId('client_id')->constrained('users')->onDelete('cascade');
+    $table->foreignId('client_id')->constrained('clients')->cascadeOnDelete();
     $table->date('sale_date');
     $table->decimal('total', 12, 2)->default(0);
     $table->timestamps();

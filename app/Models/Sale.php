@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Sale extends Model
 {
@@ -12,12 +13,12 @@ class Sale extends Model
 
     protected $casts = [
         'sale_date' => 'date',
-        'total' => 'float',
+        'total' => 'decimal:2',
     ];
 
-    public function client()
+    public function client(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'client_id');
+        return $this->belongsTo(Client::class);
     }
 
     public function items()
