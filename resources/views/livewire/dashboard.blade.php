@@ -1,10 +1,10 @@
 <div class="p-6 max-w-7xl mx-auto space-y-6">
   {{-- Seletor de ano --}}
   <div class="flex justify-end">
-    <select wire:model.live="anoSelecionado"
+    <select wire:model.live="selectedYear"
             class="border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring">
-      @foreach($anosDisponiveis as $ano)
-        <option value="{{ $ano }}">{{ $ano }}</option>
+      @foreach($availableYears as $year)
+        <option value="{{ $year }}">{{ $year }}</option>
       @endforeach
     </select>
   </div>
@@ -13,51 +13,51 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     {{-- Receita Total --}}
     <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between min-h-[140px]">
-      <span class="text-gray-600 text-sm">Receita Total ({{ $anoSelecionado }})</span>
+      <span class="text-gray-600 text-sm">Receita Total ({{ $selectedYear }})</span>
       <span class="text-3xl font-bold text-green-600">
-        R$ {{ number_format($totalReceita, 2, ',', '.') }}
+        R$ {{ number_format($totalRevenue, 2, ',', '.') }}
       </span>
     </div>
 
     {{-- Total de Vendas --}}
     <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between min-h-[140px]">
       <span class="text-gray-600 text-sm">Total de Vendas</span>
-      <span class="text-3xl font-bold">{{ $totalVendas }}</span>
+      <span class="text-3xl font-bold">{{ $totalSales }}</span>
     </div>
 
     {{-- Total de Clientes --}}
     <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between min-h-[140px]">
       <span class="text-gray-600 text-sm">Total de Clientes</span>
-      <span class="text-3xl font-bold">{{ $totalClientes }}</span>
+      <span class="text-3xl font-bold">{{ $totalClients }}</span>
     </div>
 
     {{-- Produto Mais Vendido --}}
     <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between min-h-[140px]">
-      <span class="text-gray-600 text-sm">Produto Mais Vendido ({{ $anoSelecionado }})</span>
-      <span class="text-2xl font-semibold text-blue-500">{{ $nomeProdutoMaisVendido }}</span>
+      <span class="text-gray-600 text-sm">Produto Mais Vendido ({{ $selectedYear }})</span>
+      <span class="text-2xl font-semibold text-blue-500">{{ $topSoldName }}</span>
     </div>
 
     {{-- Produto com Maior Receita --}}
     <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between min-h-[140px]">
-      <span class="text-gray-600 text-sm">Produto com Maior Receita ({{ $anoSelecionado }})</span>
-      <span class="text-2xl font-semibold text-blue-500">{{ $nomeProdutoComMaisReceita }}</span>
+      <span class="text-gray-600 text-sm">Produto com Maior Receita ({{ $selectedYear }})</span>
+      <span class="text-2xl font-semibold text-blue-500">{{ $topRevenueName }}</span>
     </div>
 
     {{-- Receita Média por Venda --}}
     <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between min-h-[140px]">
       <span class="text-gray-600 text-sm">Receita Média por Venda</span>
       <span class="text-2xl font-bold text-indigo-600">
-        R$ {{ number_format($totalVendas > 0 ? $totalReceita / $totalVendas : 0, 2, ',', '.') }}
+        R$ {{ number_format($totalSales > 0 ? $totalRevenue / $totalSales : 0, 2, ',', '.') }}
       </span>
     </div>
   </div>
 
-
-
+  {{-- Gráfico --}}
   <div class="bg-white rounded-lg shadow p-6">
-  <h2 class="text-xl font-semibold mb-4">Vendas Mensais {{ $anoSelecionado }}</h2>
-  <div style="position: relative; height: 300px;">
-    <canvas id="chartVenda" class="w-full h-full"></canvas>
+    <h2 class="text-xl font-semibold mb-4">Vendas Mensais {{ $selectedYear }}</h2>
+    <div style="position: relative; height: 300px;">
+      <canvas id="chartVenda" class="w-full h-full"></canvas>
+    </div>
   </div>
 </div>
 
@@ -66,15 +66,15 @@
 <script>
   let chartInstance = null;
 
-  async function fetchChartData(ano) {
-    const res = await fetch(`/api/chart-data/${ano}`);
+  async function fetchChartData(year) {
+    const res = await fetch(/api/chart-data/${year});
     if (!res.ok) throw new Error("Falha ao buscar dados");
     return res.json();
   }
 
-  async function renderChart(ano) {
+  async function renderChart(year) {
     try {
-      const { labels, vendas } = await fetchChartData(ano);
+      const { labels, sales } = await fetchChartData(year);
       const ctx = document.getElementById('chartVenda').getContext('2d');
 
       // Se já existe um chart, destrua antes de criar
@@ -87,7 +87,7 @@
         data: {
           labels,
           datasets: [{
-            label: 'Vendas',
+            label: 'Sales',
             data: vendas,
             backgroundColor: '#3b82f6'
           }]
@@ -111,14 +111,15 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    const selectAno = document.querySelector('select[wire\\:model\\.live="anoSelecionado"]');
+    const selectYear = document.querySelector('select[wire\\:model\\.live="anoSelecionado"]');
     // Primeiro draw com o ano carregado pelo Blade/Livewire
-    renderChart(selectAno.value);
+    renderChart(selectYear.value);
 
     // Ao mudar o select, atualiza o gráfico
-    selectAno.addEventListener('change', () => {
-      renderChart(selectAno.value);
+    selectYear.addEventListener('change', () => {
+      renderChart(selectYear.value);
     });
   });
 </script>
 @endpush
+
