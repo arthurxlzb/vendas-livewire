@@ -37,19 +37,19 @@
     {{-- mais vendido --}}
     <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between min-h-[140px]">
       <span class="text-gray-600 text-sm">Produto Mais Vendido ({{ $selectedYear }})</span>
-      <span class="text-2xl font-semibold text-blue-500">{{ $topSoldName }}</span>
+      <span class="text-2xl font-semibold">{{ $topSoldName }}</span>
     </div>
 
     {{-- maior receita --}}
     <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between min-h-[140px]">
       <span class="text-gray-600 text-sm">Produto com Maior Receita ({{ $selectedYear }})</span>
-      <span class="text-2xl font-semibold text-blue-500">{{ $topRevenueName }}</span>
+      <span class="text-2xl font-semibold">{{ $topRevenueName }}</span>
     </div>
 
     {{-- media por venda --}}
     <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between min-h-[140px]">
       <span class="text-gray-600 text-sm">Receita Média por Venda</span>
-      <span class="text-2xl font-bold text-indigo-600">
+      <span class="text-2xl font-bold text-green-600">
         R$ {{ number_format($totalSales > 0 ? $totalRevenue / $totalSales : 0, 2, ',', '.') }}
       </span>
     </div>
@@ -92,7 +92,7 @@
           datasets: [{
             label: 'Sales',
             data: sales,
-            backgroundColor: '#3b82f6'
+            backgroundColor: '#16a34a'
           }]
         },
         options: {
