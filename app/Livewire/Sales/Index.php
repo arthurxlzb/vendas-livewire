@@ -28,7 +28,7 @@ class Index extends Component
         'saleDate'           => 'required|date',
         'items'              => 'required|array|min:1',
         'items.*.product_id' => 'required|exists:products,id',
-        'items.*.quantity'   => 'required|numeric|min:1',
+        'items.*.quantity'   => 'required|integer|min:1',
     ];
 
     public function mount(): void

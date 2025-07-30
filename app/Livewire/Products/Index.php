@@ -30,7 +30,7 @@ class Index extends Component
         'name'        => 'required|string|min:3|max:100',
         'price'       => 'required|numeric|min:0.01',
         'description' => 'nullable|string|max:1000',
-        'quantity'    => 'required|numeric|min:0.01',
+        'quantity'    => 'required|integer|min:1',
         'unit'        => 'required|in:G,KG,TON,ML,L,M²,M³,CM,M,KM,UNI',
     ];
 
